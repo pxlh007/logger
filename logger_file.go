@@ -1,4 +1,4 @@
-package logs
+package logger
 
 import (
     "os"
@@ -16,8 +16,6 @@ func NewRotateFileLogger(dir string)  *RotateFileLogger{
     return logger
 }
 
-
-
 // 一段时间自动创建新的log文件
 // 如果在间隔时间无日志，此间隔不会创建log文件
 type RotateFileLogger struct {
@@ -30,6 +28,9 @@ type RotateFileLogger struct {
     newFileGapTime          time.Duration       // 创建新log的间隔时间
     lastFileTime            time.Time           // 上次创建文件，文件对应时间(依据间隔时间，不是真实创建时间)
 }
+
+// 声明接口实现者
+var _ ILogger = RotateFileLogger{}
 
 func (l * RotateFileLogger) Init(dir string) {
     l.Logger.Init()

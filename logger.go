@@ -1,4 +1,4 @@
-package logs
+package logger
 
 import (
     "sync"
@@ -73,6 +73,9 @@ type Logger struct {
     logLevel        LogType
 }
 
+// 声明接口实现者
+var _ ILogger = Logger{}
+
 func (l *Logger) Init() {
     l.mu.Lock()
     defer l.mu.Unlock()
@@ -129,8 +132,6 @@ func (l *Logger) Critical(i interface{}) {
 func (l *Logger) Fatal(i interface{}) {
     l.log(FATAL, i)
 }
-
-
 
 func (l *Logger) DefaultLogFormatFunc(logType LogType, i interface{})  (string, []interface{}, bool){
     format := "\033["+ logTypesColors[logType] + "m%s [%s] %s \033[0m\n"
