@@ -30,7 +30,7 @@ type RotateFileLogger struct {
 }
 
 // 声明接口实现者
-var _ ILogger = RotateFileLogger{}
+var _ ILogger = &RotateFileLogger{}
 
 func (l * RotateFileLogger) Init(dir string) {
     l.Logger.Init()

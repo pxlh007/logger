@@ -1,5 +1,6 @@
 package logger
 
+// 定义格式函数
 type FormatFunc func( LogType, interface{}) (string, []interface{}, bool)
 
 // 定义日志接口

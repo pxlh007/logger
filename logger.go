@@ -74,7 +74,7 @@ type Logger struct {
 }
 
 // 声明接口实现者
-var _ ILogger = Logger{}
+var _ ILogger = &Logger{}
 
 func (l *Logger) Init() {
     l.mu.Lock()
