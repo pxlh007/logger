@@ -158,6 +158,9 @@ func (l *Logger) DefaultLogFormatFunc(logType LogType, i interface{}) (string, [
 	formatTime := time.Now().Format(layout)
 	if len(formatTime) != len(layout) {
 		// 可能出现结尾是0被省略如：2006/01/02 - 15:04:05.9 补足成 2006/01/02 - 15:04:05.9000
+		if len(formatTime) == 21 {
+			formatTime += "."
+		}
 		formatTime += ".000"[4-(len(layout)-len(formatTime)) : 4]
 	}
 

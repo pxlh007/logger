@@ -118,6 +118,9 @@ func (l *RotateFileLogger) DefaultLogFormatFunc(logType LogType, i interface{}) 
 	formatTime := now.Format(layout)
 	if len(formatTime) != len(layout) {
 		// 对于如果是 出现2006-01-02 15:04:05.99  适配处理 成2006-01-02 15:04:05.990
+		if len(formatTime) == 21 {
+			formatTime += "."
+		}
 		formatTime += ".000"[4-(len(layout)-len(formatTime)) : 4]
 	}
 
