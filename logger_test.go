@@ -14,23 +14,23 @@ func BenchmarkLogger(b *testing.B) {
 	b.ResetTimer()
 
 	// 初始化变量
-	// var l *logger.Logger = logger.NewLogger()
+	//var l *logger.Logger = logger.NewLogger()
 	var lf *logger.RotateFileLogger = logger.NewRotateFileLogger("./")
 	//	var s = []string{
-	//		"200-g",
+	//		"200",
 	//		"请求成功",
 	//		"0.55ms",
-	//		"GET-y",
+	//		"GET",
 	//		"/hello",
 	//	}
 
-	// ss := "1sdsds"
+	ss := "1"
 
 	// 循环执行测试代码
 	for i := 0; i < b.N; i++ {
 		// 这里书写测试代码
-		// l.Info("200 | ok! | 1.052µs | POST /PING ")
-		lf.Error("记录错误信息...")
+		// l.Info(ss)
+		lf.Info(ss)
 	}
 
 }
