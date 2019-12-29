@@ -1,6 +1,7 @@
 package logger
 
 import (
+	// "bytes"
 	"fmt"
 	"io"
 	"os"
@@ -154,7 +155,7 @@ func (l *Logger) DefaultLogFormatFunc(logType LogType, i interface{}) (string, [
 	}()
 
 	// 计算日期format
-	layout := "2006/01/02 - 15:04:05.9999"
+	layout := "2006/01/02 - 15:04:05.0000"
 	formatTime := time.Now().Format(layout)
 	if len(formatTime) != len(layout) {
 		// 可能出现结尾是0被省略如：2006/01/02 - 15:04:05.9 补足成 2006/01/02 - 15:04:05.9000
@@ -165,12 +166,25 @@ func (l *Logger) DefaultLogFormatFunc(logType LogType, i interface{}) (string, [
 	}
 
 	// 计算数据format
-	format := ""
+	// format := ""
+	// b := make([]byte, 0, 1024)
 	values := []interface{}{}
+	// var bf bytes.Buffer // 提升字符串拼接性能
+	var b strings.Builder // 提升性能
+	b.Grow(32)
 	if iSli, ok := i.([]string); ok {
 		// 切片
 		l := len(iSli)
-		format = "[\033[" + logTypesColors[logType] + "m%s\033[0m] %s | "
+		b.WriteString("[\033[")
+		b.WriteString(logTypesColors[logType])
+		b.WriteString("m%s\033[0m] %s | ")
+		// bf.WriteString("[\033[")
+		// bf.WriteString(logTypesColors[logType])
+		// bf.WriteString("m%s\033[0m] %s | ")
+		// b = append(b, "[\033["...)
+		// b = append(b, logTypesColors[logType]...)
+		// b = append(b, "m%s\033[0m] %s | "...)
+		// format = "[\033[" + logTypesColors[logType] + "m%s\033[0m] %s | "
 		values = make([]interface{}, l+2)
 		values[0] = logTypeStrings[logType]
 		values[1] = formatTime
@@ -183,31 +197,59 @@ func (l *Logger) DefaultLogFormatFunc(logType LogType, i interface{}) (string, [
 				color := iSli[j][ls-2:]
 				if color[0] == '-' && (color[1] == 'g' || color[1] == 'b' || color[1] == 'r' || color[1] == 'y') {
 					tj = iSli[j][0 : ls-2] // 去除颜色标志
-					format += "\033[" + dataColor[string(color[1])] + "m%s\033[0m | "
+					b.WriteString("\033[")
+					b.WriteString(dataColor[string(color[1])])
+					b.WriteString("m%s\033[0m | ")
+					// bf.WriteString("\033[")
+					// bf.WriteString(dataColor[string(color[1])])
+					// bf.WriteString("m%s\033[0m | ")
+					// b = append(b, "\033["...)
+					// b = append(b, dataColor[string(color[1])]...)
+					// b = append(b, "m%s\033[0m | "...)
+					// format += "\033[" + dataColor[string(color[1])] + "m%s\033[0m | "
 				} else {
 					tj = iSli[j]
-					format += "%s | "
+					b.WriteString("%s | ")
+					// bf.WriteString("%s | ")
+					// b = append(b, "%s | "...)
+					// format += "%s | "
 				}
 			} else {
 				tj = iSli[j]
-				format += "%s | "
+				b.WriteString("%s | ")
+				// bf.WriteString("%s | ")
+				// b = append(b, "%s | "...)
+				// format += "%s | "
 			}
 			// 计算输出值
 			values[j+2] = tj
 		}
-		format += "\n"
+		b.WriteString("\n")
+		// bf.WriteString("\n")
+		// b = append(b, "\n"...)
+		// format += "\n"
 	} else if iStr, ok := i.(string); ok {
 		// 文本
-		format = "[\033[" + logTypesColors[logType] + "m%s\033[0m] %s | %s | \n"
+		b.WriteString("[\033[")
+		b.WriteString(logTypesColors[logType])
+		b.WriteString("m%s\033[0m] %s | %s | \n")
+		// bf.WriteString("[\033[")
+		// bf.WriteString(logTypesColors[logType])
+		// bf.WriteString("m%s\033[0m] %s | %s | \n")
+		// b = append(b, "[\033["...)
+		// b = append(b, logTypesColors[logType]...)
+		// b = append(b, "m%s\033[0m] %s | %s | \n"...)
+		// format = "[\033[" + logTypesColors[logType] + "m%s\033[0m] %s | %s | \n"
 		// 计算输出值
 		values = make([]interface{}, 3)
 		values[0] = logTypeStrings[logType]
 		values[1] = formatTime
 		values[2] = iStr
 	}
-
+	// 从buffer中取回拼接后的字符串
+	// format = bf.String()
 	// 返回格式/值
-	return format, values, true
+	return b.String(), values, true
 }
 
 func (l *Logger) log(logType LogType, i interface{}) {
@@ -223,7 +265,7 @@ func (l *Logger) log(logType LogType, i interface{}) {
 		return
 	}
 
-	_, err := fmt.Fprintf(l.out, format, data...)
+	_, err := fmt.Fprintf(l.out, string(format), data...)
 	if err != nil {
 		panic(err)
 	}

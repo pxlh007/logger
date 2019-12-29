@@ -3,6 +3,7 @@ package logger
 // 单元测试和基准测试文件
 
 import (
+	// "log"
 	"testing"
 
 	"github.com/pxlh007/logger"
@@ -14,23 +15,24 @@ func BenchmarkLogger(b *testing.B) {
 	b.ResetTimer()
 
 	// 初始化变量
-	//var l *logger.Logger = logger.NewLogger()
+	// var l *logger.Logger = logger.NewLogger()
 	var lf *logger.RotateFileLogger = logger.NewRotateFileLogger("./")
-	//	var s = []string{
-	//		"200",
-	//		"请求成功",
-	//		"0.55ms",
-	//		"GET",
-	//		"/hello",
-	//	}
+	var s = []string{
+		"200",
+		"请求成功",
+		"0.55ms",
+		"GET",
+		"/hello",
+	}
 
-	ss := "1"
+	// ss := "200 | ok! | 1.053µs | GET  /PONG "
 
 	// 循环执行测试代码
 	for i := 0; i < b.N; i++ {
 		// 这里书写测试代码
-		// l.Info(ss)
-		lf.Info(ss)
+		// log.Println(ss)
+		// l.Info(s)
+		lf.Info(s)
 	}
 
 }

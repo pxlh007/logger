@@ -126,6 +126,8 @@ func (l *RotateFileLogger) DefaultLogFormatFunc(logType LogType, i interface{}) 
 
 	// 计算数据format
 	format := "[ %s ] %s | "
+	// b := make([]byte, 0, 1024)
+	// b = append(b, "[ %s ] %s | "...)
 	values := []interface{}{}
 	if iSli, ok := i.([]string); ok {
 		// 切片
@@ -148,13 +150,16 @@ func (l *RotateFileLogger) DefaultLogFormatFunc(logType LogType, i interface{}) 
 				tj = iSli[j]
 			}
 			format += "%s | "
+			// b = append(b, "%s | "...)
 			// 计算输出值
 			values[j+2] = tj
 		}
 		format += "\n"
+		// b = append(b, "\n"...)
 	} else if iStr, ok := i.(string); ok {
 		// 文本
 		format += "%s |  \n"
+		// b = append(b, "%s |  \n"...)
 		// 计算输出值
 		values = make([]interface{}, 3)
 		values[0] = logTypeStrings[logType]
